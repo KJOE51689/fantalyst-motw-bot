@@ -1,14 +1,14 @@
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("roll")
-    .setDescription("Roll a 2d6: 3")
+    .setDescription("Roll a 2d6 + your stat bonus")
     .addNumberOption((option) =>
       option
         .setName("bonus")
         .setDescription("The bonus stat of your roll")
-        .setRequired(false)
+        .setRequired(true)
     ),
   /**
    * @param {discord.Client} client
@@ -21,16 +21,29 @@ module.exports = {
     let diceTwo = choiceArray[Math.floor(Math.random() * choiceArray.length)];
     let total = diceOne + diceTwo + bonus;
     let message = "";
+    let title = "";
+    let footer = "No experience gained";
 
     if (total >= 10) {
-      message = `Crit Success: You rolled ${diceOne} + ${diceTwo} + ${bonus} = ${total}`;
+      title = "Critical Success";
+      message = `You rolled ${diceOne} + ${diceTwo} + ${bonus} = ${total}`;
     } else if (total >= 7) {
-      message = `Partial Success: You rolled ${diceOne} + ${diceTwo} + ${bonus} = ${total}`;
+      title = "Partial Success";
+      message = `You rolled ${diceOne} + ${diceTwo} + ${bonus} = ${total}`;
     } else {
-      message = `Fail: You suck, you rolled ${diceOne} + ${diceTwo} + ${bonus} = ${total}`;
+      title = "Failure";
+      message = `You rolled ${diceOne} + ${diceTwo} + ${bonus} = ${total}`;
+      footer = "Mark one experience :thumbsup:";
     }
     try {
-      await interaction.reply({ content: message });
+      const embed = new EmbedBuilder()
+        .setColor(0x0099ff)
+        .setTitle(`:game_die: ${title}`)
+        .setTimestamp()
+        .setFooter({ text: footer })
+        .setDescription(message);
+
+      await interaction.reply({ embeds: [embed] });
     } catch (err) {
       console.log(err);
 

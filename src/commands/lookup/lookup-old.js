@@ -37,7 +37,7 @@ const lookupValues = [
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("lookup")
+    .setName("lookup-text")
     .setDescription("Lookup different Monster Of the Week moves. Part 10")
     .addStringOption((option) =>
       option
